@@ -69,6 +69,24 @@ const ReportScamScreen = ({ route, navigation }) => {
             Your report will be reviewed by our team and shared with NPCI if verified.
           </Text>
         </View>
+
+        {/* Recent Reports Section */}
+        <View style={styles.recentReportsContainer}>
+          <Text style={styles.recentReportsTitle}>Recent Reports on Suspicious Contacts</Text>
+          {[
+            { id: 1, upi: 'scammer1@upi', reason: 'Asked for OTP over phone call', date: '2 hours ago' },
+            { id: 2, upi: 'fake_prize@ybl', reason: 'Sent a link claiming I won a lottery', date: '5 hours ago' },
+            { id: 3, upi: 'support_fake@sbi', reason: 'Pretended to be bank support', date: '1 day ago' }
+          ].map((report) => (
+            <View key={report.id} style={styles.reportCard}>
+              <View style={styles.reportHeader}>
+                <Text style={styles.reportUpi}>{report.upi}</Text>
+                <Text style={styles.reportDate}>{report.date}</Text>
+              </View>
+              <Text style={styles.reportReason}>{report.reason}</Text>
+            </View>
+          ))}
+        </View>
       </ScrollView>
     </ScreenContainer>
   );
@@ -114,6 +132,45 @@ const styles = StyleSheet.create({
     color: '#999',
     textAlign: 'center',
     marginTop: 16,
+    lineHeight: 18,
+  },
+  recentReportsContainer: {
+    marginTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    paddingTop: 20,
+  },
+  recentReportsTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 15,
+  },
+  reportCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  reportHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  reportUpi: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#B91C1C',
+  },
+  reportDate: {
+    fontSize: 12,
+    color: '#94A3B8',
+  },
+  reportReason: {
+    fontSize: 13,
+    color: '#475569',
     lineHeight: 18,
   },
 });

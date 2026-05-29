@@ -175,7 +175,7 @@ const HomeScreen = ({ navigation }) => {
               </View>
               <Text style={styles.actionLabel}>{t.home_history}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionCard}>
+            <TouchableOpacity style={styles.actionCard} onPress={() => navigation.navigate('ReportScam')}>
               <View style={[styles.actionIcon, { backgroundColor: '#FFF3E0' }]}>
                 <ShieldAlert color="#F57C00" size={24} />
               </View>
