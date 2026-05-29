@@ -19,22 +19,15 @@ const WARNING_BY_LANGUAGE = {
 };
 
 const KEYWORD_RULES = [
-  { key: 'otp', label: 'OTP request detected' },
-  { key: 'kyc', label: 'KYC urgency detected' },
-  { key: 'urgent', label: 'Urgency language detected' },
-  { key: 'link', label: 'Suspicious link instruction detected' },
-  { key: 'reward', label: 'Reward lure detected' },
-  { key: 'verify', label: 'Forced verification phrase detected' },
-  { key: 'winner', label: 'Fake lottery/prize lure' },
-  { key: 'lottery', label: 'Fake lottery/prize lure' },
-  { key: 'blocked', label: 'Account suspension threat' },
-  { key: 'suspended', label: 'Account suspension threat' },
-  { key: 'cashback', label: 'Fake cashback lure' },
-  { key: 'claim', label: 'Action required trick' },
-  { key: 'free', label: 'Fake freebie lure' },
-  { key: 'pan', label: 'PAN update urgency' },
-  { key: 'aadhar', label: 'Aadhar update urgency' },
-  { key: 'refund', label: 'Fake refund trick' },
+  { keys: ['otp', 'one time password', 'pin', 'password', 'cvv'], label: 'Sensitive info request detected' },
+  { keys: ['kyc', 'pan', 'aadhar', 'document'], label: 'Document update urgency detected' },
+  { keys: ['urgent', 'immediately', 'action required', 'within 24 hours', 'alert'], label: 'Urgency language detected' },
+  { keys: ['link', 'http', 'www', 'click here', 'click'], label: 'Suspicious link instruction detected' },
+  { keys: ['reward', 'cashback', 'free', 'prize', 'won', 'winner', 'lottery', 'congratulations', 'gift'], label: 'Reward/Prize lure detected' },
+  { keys: ['verify', 'update account', 'complete your'], label: 'Forced verification phrase detected' },
+  { keys: ['blocked', 'suspend', 'expire', 'deactivate', 'close your account'], label: 'Account suspension threat' },
+  { keys: ['claim', 'refund', 'money credited', 'credited to your'], label: 'Fake transaction trick' },
+  { keys: ['dear customer', 'dear user', 'dear sir/madam'], label: 'Generic scam greeting' },
 ];
 
 const isTtsAvailable = typeof Speech.speak === 'function' && typeof Speech.stop === 'function';
@@ -59,7 +52,9 @@ const FraudMessageChecker = () => {
 
   const analyzeMessage = () => {
     const normalizedText = message.toLowerCase();
-    const detectedReasons = KEYWORD_RULES.filter((rule) => normalizedText.includes(rule.key)).map((rule) => rule.label);
+    const detectedReasons = KEYWORD_RULES.filter((rule) => 
+      rule.keys.some((k) => normalizedText.includes(k))
+    ).map((rule) => rule.label);
 
     const isScam = detectedReasons.length > 0;
     const riskLevel = detectedReasons.length >= 3 ? 'HIGH RISK' : isScam ? 'SUSPICIOUS' : 'LOW RISK';
