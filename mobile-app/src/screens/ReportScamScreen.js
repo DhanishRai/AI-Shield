@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ScreenContainer from '../components/ScreenContainer';
 import Header from '../components/Header';
 import InputField from '../components/InputField';
@@ -12,6 +13,22 @@ const ReportScamScreen = ({ route, navigation }) => {
   const [upiId, setUpiId] = useState(prefillUpiId);
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
+  const [myReports, setMyReports] = useState([
+    { id: 1, upi: 'scammer1@upi', reason: 'Asked for OTP over phone call', date: '2 hours ago' },
+    { id: 2, upi: 'fake_prize@ybl', reason: 'Sent a link claiming I won a lottery', date: '5 hours ago' }
+  ]);
+
+  useEffect(() => {
+    const loadReports = async () => {
+      try {
+        const saved = await AsyncStorage.getItem('user_reports');
+        if (saved) setMyReports(JSON.parse(saved));
+      } catch (e) {
+        console.log('Failed to load reports');
+      }
+    };
+    loadReports();
+  }, []);
 
   const handleSubmit = async () => {
     if (!upiId || !reason) {
@@ -21,9 +38,14 @@ const ReportScamScreen = ({ route, navigation }) => {
     setLoading(true);
     try {
       await reportScam({ upiId, reason });
-      Alert.alert('Report Submitted', 'Thank you for helping keep the community safe!', [
-        { text: 'OK', onPress: () => navigation.navigate('Home') }
-      ]);
+      const newReport = { id: Date.now(), upi: upiId, reason: reason, date: 'Just now' };
+      const updatedReports = [newReport, ...myReports];
+      setMyReports(updatedReports);
+      await AsyncStorage.setItem('user_reports', JSON.stringify(updatedReports));
+      setUpiId('');
+      setReason('');
+      
+      Alert.alert('Report Submitted', 'Thank you! Your report has been added to your history.');
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -31,62 +53,71 @@ const ReportScamScreen = ({ route, navigation }) => {
     }
   };
 
+  const viewMode = route.params?.viewMode || 'both';
+
   return (
     <ScreenContainer>
-      <Header title="Report a Scam" showBack onBack={() => navigation.goBack()} />
+      <Header title={viewMode === 'list' ? "My Reports" : "Report Fraud"} showBack onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.subtitle}>Help others by reporting suspicious UPI IDs or QR codes.</Text>
         
-        <TouchableOpacity style={styles.uploadBox} activeOpacity={0.6}>
-          <Upload color="#0066FF" size={32} />
-          <Text style={styles.uploadText}>Upload Scam QR Code</Text>
-          <Text style={styles.uploadSubtext}>Optional (JPG, PNG)</Text>
-        </TouchableOpacity>
+        {viewMode !== 'list' && (
+          <>
+            <Text style={styles.subtitle}>Help others by reporting suspicious contacts, UPI IDs or QR codes.</Text>
+            
+            <TouchableOpacity style={styles.uploadBox} activeOpacity={0.6}>
+              <Upload color="#0066FF" size={32} />
+              <Text style={styles.uploadText}>Upload Scam QR Code</Text>
+              <Text style={styles.uploadSubtext}>Optional (JPG, PNG)</Text>
+            </TouchableOpacity>
 
-        <InputField 
-          label="Scammer UPI ID"
-          placeholder="e.g. mobile@upi"
-          value={upiId}
-          onChangeText={setUpiId}
-        />
+            <InputField 
+              label="Contact Number / UPI ID"
+              placeholder="e.g. +91 9876... or scammer@upi"
+              value={upiId}
+              onChangeText={setUpiId}
+            />
 
-        <InputField 
-          label="Reason / Incident Details"
-          placeholder="Describe what happened..."
-          value={reason}
-          onChangeText={setReason}
-          multiline
-          numberOfLines={4}
-        />
+            <InputField 
+              label="Reason / Incident Details"
+              placeholder="Describe what happened..."
+              value={reason}
+              onChangeText={setReason}
+              multiline
+              numberOfLines={4}
+            />
 
-        <View style={styles.footer}>
-          <PrimaryButton 
-            title="Submit Report" 
-            onPress={handleSubmit}
-            loading={loading}
-          />
-          <Text style={styles.disclaimer}>
-            Your report will be reviewed by our team and shared with NPCI if verified.
-          </Text>
-        </View>
+            <View style={styles.footer}>
+              <PrimaryButton 
+                title="Submit Report" 
+                onPress={handleSubmit}
+                loading={loading}
+              />
+              <Text style={styles.disclaimer}>
+                Your report will be reviewed by our team and shared with NPCI if verified.
+              </Text>
+            </View>
+          </>
+        )}
 
         {/* Recent Reports Section */}
-        <View style={styles.recentReportsContainer}>
-          <Text style={styles.recentReportsTitle}>Recent Reports on Suspicious Contacts</Text>
-          {[
-            { id: 1, upi: 'scammer1@upi', reason: 'Asked for OTP over phone call', date: '2 hours ago' },
-            { id: 2, upi: 'fake_prize@ybl', reason: 'Sent a link claiming I won a lottery', date: '5 hours ago' },
-            { id: 3, upi: 'support_fake@sbi', reason: 'Pretended to be bank support', date: '1 day ago' }
-          ].map((report) => (
-            <View key={report.id} style={styles.reportCard}>
-              <View style={styles.reportHeader}>
-                <Text style={styles.reportUpi}>{report.upi}</Text>
-                <Text style={styles.reportDate}>{report.date}</Text>
-              </View>
-              <Text style={styles.reportReason}>{report.reason}</Text>
-            </View>
-          ))}
-        </View>
+        {viewMode !== 'form' && (
+          <View style={styles.recentReportsContainer}>
+            <Text style={styles.recentReportsTitle}>My Recent Reports</Text>
+            {myReports.length === 0 ? (
+              <Text style={{color: '#94A3B8', textAlign: 'center', marginTop: 10}}>No reports submitted yet.</Text>
+            ) : (
+              myReports.map((report) => (
+                <View key={report.id} style={styles.reportCard}>
+                  <View style={styles.reportHeader}>
+                    <Text style={styles.reportUpi}>{report.upi}</Text>
+                    <Text style={styles.reportDate}>{report.date}</Text>
+                  </View>
+                  <Text style={styles.reportReason}>{report.reason}</Text>
+                </View>
+              ))
+            )}
+          </View>
+        )}
       </ScrollView>
     </ScreenContainer>
   );

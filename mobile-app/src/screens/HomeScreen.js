@@ -175,7 +175,7 @@ const HomeScreen = ({ navigation }) => {
               </View>
               <Text style={styles.actionLabel}>{t.home_history}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionCard} onPress={() => navigation.navigate('ReportScam')}>
+            <TouchableOpacity style={styles.actionCard} onPress={() => navigation.navigate('ReportScam', { viewMode: 'list' })}>
               <View style={[styles.actionIcon, { backgroundColor: '#FFF3E0' }]}>
                 <ShieldAlert color="#F57C00" size={24} />
               </View>
@@ -224,7 +224,7 @@ const HomeScreen = ({ navigation }) => {
               </View>
               <Text style={styles.supportLabel}>{t.home_learnSafety}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.supportItem}>
+            <TouchableOpacity style={styles.supportItem} onPress={() => navigation.navigate('ReportScam', { viewMode: 'form' })}>
               <View style={styles.supportIcon}>
                 <ShieldAlert color="#666" size={20} />
               </View>
