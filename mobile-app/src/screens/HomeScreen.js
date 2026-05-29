@@ -13,12 +13,13 @@ import { useIsFocused } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }) => {
-  const { simpleMode, language } = useSettings();
+  const { simpleMode, language, toggleSimpleMode, changeLanguage } = useSettings();
   const isFocused = useIsFocused();
   const t = translations[language] || translations['English'];
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showProfilePage, setShowProfilePage] = useState(false);
   
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -95,10 +96,71 @@ const HomeScreen = ({ navigation }) => {
     return 'Risk';
   };
 
+  if (showProfilePage) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 20, paddingTop: Platform.OS === 'ios' ? 60 : 40, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F0F0F0' }}>
+          <TouchableOpacity onPress={() => setShowProfilePage(false)} style={{ padding: 5 }}>
+            <ArrowRight color="#1A1A1A" size={24} style={{ transform: [{ rotate: '180deg' }] }} />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 20, fontWeight: '700', marginLeft: 15, color: '#1A1A1A' }}>My Profile</Text>
+        </View>
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+          <View style={{ alignItems: 'center', marginBottom: 30 }}>
+            <Image 
+              source={{ uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80' }} 
+              style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 15 }} 
+            />
+            <Text style={{ fontSize: 22, fontWeight: '700', color: '#1E293B' }}>Demo User</Text>
+            <Text style={{ fontSize: 16, color: '#64748B', marginTop: 5 }}>demo.user@paynova.com</Text>
+          </View>
+          
+          <View style={{ backgroundColor: '#FFFFFF', borderRadius: 12, padding: 15, marginBottom: 20 }}>
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' }} onPress={() => toggleSimpleMode()}>
+              <User color="#475569" size={22} />
+              <Text style={{ fontSize: 16, marginLeft: 15, color: '#334155', flex: 1 }}>
+                {simpleMode ? "Switch to Detailed Layout" : "Switch to Simple Layout"}
+              </Text>
+              <ArrowRight color="#CBD5E1" size={18} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' }} onPress={() => changeLanguage(language === 'English' ? 'Hindi' : 'English')}>
+              <Smartphone color="#475569" size={22} />
+              <Text style={{ fontSize: 16, marginLeft: 15, color: '#334155', flex: 1 }}>
+                Change Language ({language === 'English' ? 'Switch to Hindi' : 'Switch to English'})
+              </Text>
+              <ArrowRight color="#CBD5E1" size={18} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12 }} onPress={() => { setShowProfilePage(false); navigation.navigate('History'); }}>
+              <History color="#475569" size={22} />
+              <Text style={{ fontSize: 16, marginLeft: 15, color: '#334155', flex: 1 }}>My Transaction History</Text>
+              <ArrowRight color="#CBD5E1" size={18} />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity 
+            style={{ backgroundColor: '#FEE2E2', borderRadius: 12, padding: 15, alignItems: 'center', marginTop: 20 }}
+            onPress={() => { setShowProfilePage(false); navigation.replace('Login'); }}
+          >
+            <Text style={{ color: '#EF4444', fontSize: 16, fontWeight: '700' }}>Log Out</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={{ backgroundColor: '#E2E8F0', borderRadius: 12, padding: 15, alignItems: 'center', marginTop: 15 }}
+            onPress={() => setShowProfilePage(false)}
+          >
+            <Text style={{ color: '#334155', fontSize: 16, fontWeight: '700' }}>Back to Home Screen</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    );
+  }
+
   return (
     <ScreenContainer style={{ flex: 1 }}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.profileBtn}>
+        <TouchableOpacity style={styles.profileBtn} onPress={() => setShowProfilePage(true)}>
           <Image 
             source={{ uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80' }} 
             style={styles.profileImg} 
