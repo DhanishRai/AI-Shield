@@ -159,39 +159,7 @@ const HomeScreen = ({ navigation }) => {
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
 
 
-          {!simpleMode && (
-            <>
-              <Text style={styles.sectionTitle}>{t.home_securityInsights}</Text>
-              <ScrollView 
-                horizontal={true} 
-                showsHorizontalScrollIndicator={false} 
-                pagingEnabled={true}
-                style={styles.bannerCarousel}
-              >
-                <LinearGradient colors={['#FF9966', '#FF5E62']} style={styles.promoBanner}>
-                  <View style={styles.bannerInfo}>
-                    <Text style={styles.bannerText}>{t.home_aiLinkChecker}</Text>
-                    <Text style={styles.bannerSub}>{t.home_aiLinkDesc}</Text>
-                  </View>
-                  <ShieldCheck color="#FFFFFF" size={40} opacity={0.8} />
-                </LinearGradient>
-                <LinearGradient colors={['#00F260', '#0575E6']} style={styles.promoBanner}>
-                  <View style={styles.bannerInfo}>
-                    <Text style={styles.bannerText}>{t.home_secureRewards}</Text>
-                    <Text style={styles.bannerSub}>{t.home_secureRewardsDesc}</Text>
-                  </View>
-                  <Smartphone color="#FFFFFF" size={40} opacity={0.8} />
-                </LinearGradient>
-                <LinearGradient colors={['#8E2DE2', '#4A00E0']} style={styles.promoBanner}>
-                  <View style={styles.bannerInfo}>
-                    <Text style={styles.bannerText}>{t.home_monitoring}</Text>
-                    <Text style={styles.bannerSub}>{t.home_monitoringDesc}</Text>
-                  </View>
-                  <ShieldAlert color="#FFFFFF" size={40} opacity={0.8} />
-                </LinearGradient>
-              </ScrollView>
-            </>
-          )}
+
 
           <Text style={styles.sectionTitle}>{t.home_quickActions}</Text>
           <View style={styles.actionGrid}>
