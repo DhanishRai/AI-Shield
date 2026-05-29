@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Image, Platform, TextInput } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
+import * as Contacts from 'expo-contacts';
 import FraudMessageChecker from '../components/FraudMessageChecker';
 import { Scan, History, ShieldAlert, Search, ArrowRight, User, Wallet, CreditCard, Smartphone, ShieldCheck, Bell } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,6 +20,34 @@ const HomeScreen = ({ navigation }) => {
   const slideAnim = useRef(new Animated.Value(30)).current;
   
   const [recentTransactions, setRecentTransactions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [deviceContacts, setDeviceContacts] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === 'granted') {
+        const { data } = await Contacts.getContactsAsync({
+          fields: [Contacts.Fields.PhoneNumbers],
+        });
+
+        if (data.length > 0) {
+          const mappedContacts = data
+            .filter(c => c.name && c.phoneNumbers && c.phoneNumbers.length > 0)
+            .map(c => ({
+              id: c.id,
+              name: c.name,
+              phone: c.phoneNumbers[0].number
+            }));
+          setDeviceContacts(mappedContacts);
+        }
+      }
+    })();
+  }, []);
+
+  const filteredContacts = searchQuery.trim() === '' 
+    ? [] 
+    : deviceContacts.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5);
 
   useEffect(() => {
     Animated.parallel([
@@ -91,11 +120,32 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, { zIndex: 10 }]}>
         <View style={styles.searchBar}>
           <Search color="#94A3B8" size={20} />
-          <Text style={styles.searchInput}>{t.home_payAnyone}</Text>
+          <TextInput 
+            style={[styles.searchInput, { flex: 1, padding: 0 }]} 
+            placeholder={t.home_payAnyone} 
+            placeholderTextColor="#94A3B8" 
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
         </View>
+        {filteredContacts.length > 0 && (
+          <View style={styles.contactsDropdown}>
+            {filteredContacts.map(contact => (
+              <TouchableOpacity key={contact.id} style={styles.contactItem}>
+                <View style={styles.contactAvatar}>
+                  <Text style={styles.contactAvatarText}>{contact.name.charAt(0)}</Text>
+                </View>
+                <View>
+                  <Text style={styles.contactName}>{contact.name}</Text>
+                  <Text style={styles.contactPhone}>{contact.phone}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </View>
 
       <View style={{ flex: 1 }}>
@@ -303,6 +353,53 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     fontSize: 15,
     fontWeight: '600',
+  },
+  contactsDropdown: {
+    position: 'absolute',
+    top: 65,
+    left: 20,
+    right: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 15,
+    elevation: 10,
+    zIndex: 20,
+  },
+  contactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  contactAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E3F2FD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  contactAvatarText: {
+    color: '#1976D2',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  contactName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  contactPhone: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
   },
   smallLogo: {
     width: 32,
