@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Image, Platform, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Image, Platform, TextInput, Alert } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import * as Contacts from 'expo-contacts';
 import FraudMessageChecker from '../components/FraudMessageChecker';
@@ -230,7 +230,10 @@ const HomeScreen = ({ navigation }) => {
               </View>
               <Text style={styles.supportLabel}>{t.home_reportFraud}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.supportItem}>
+            <TouchableOpacity 
+              style={styles.supportItem} 
+              onPress={() => Alert.alert('Contact Us', 'Support Email: help@fraudshield.com\nPhone: +1-800-555-0199\nAvailable: 24/7 Mon-Sun')}
+            >
               <View style={styles.supportIcon}>
                 <Smartphone color="#666" size={20} />
               </View>
