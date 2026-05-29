@@ -22,9 +22,19 @@ const KEYWORD_RULES = [
   { key: 'otp', label: 'OTP request detected' },
   { key: 'kyc', label: 'KYC urgency detected' },
   { key: 'urgent', label: 'Urgency language detected' },
-  { key: 'click link', label: 'Suspicious link instruction detected' },
+  { key: 'link', label: 'Suspicious link instruction detected' },
   { key: 'reward', label: 'Reward lure detected' },
-  { key: 'verify now', label: 'Forced verification phrase detected' },
+  { key: 'verify', label: 'Forced verification phrase detected' },
+  { key: 'winner', label: 'Fake lottery/prize lure' },
+  { key: 'lottery', label: 'Fake lottery/prize lure' },
+  { key: 'blocked', label: 'Account suspension threat' },
+  { key: 'suspended', label: 'Account suspension threat' },
+  { key: 'cashback', label: 'Fake cashback lure' },
+  { key: 'claim', label: 'Action required trick' },
+  { key: 'free', label: 'Fake freebie lure' },
+  { key: 'pan', label: 'PAN update urgency' },
+  { key: 'aadhar', label: 'Aadhar update urgency' },
+  { key: 'refund', label: 'Fake refund trick' },
 ];
 
 const isTtsAvailable = typeof Speech.speak === 'function' && typeof Speech.stop === 'function';

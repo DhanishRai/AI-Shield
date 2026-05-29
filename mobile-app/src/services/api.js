@@ -1,11 +1,15 @@
 import axios from 'axios';
 
-// Backend Node.js API URL
-// For Android emulator: use 10.0.2.2 instead of localhost
-// For physical device: use your computer's local IP (e.g., 192.168.1.100)
-// For iOS simulator: localhost works
-// Using local IPv4 address directly since tunnels crash
-const API_BASE_URL = 'http://10.201.109.69:3000/api';
+import Constants from 'expo-constants';
+
+// Get the correct local IP dynamically from Expo's host configuration
+const getLocalHost = () => {
+  const debuggerHost = Constants.expoConfig?.hostUri;
+  const localhost = debuggerHost?.split(':')[0];
+  return localhost ? `http://${localhost}:3000/api` : 'http://192.168.137.48:3000/api';
+};
+
+const API_BASE_URL = getLocalHost();
 
 /**
  * Helper to handle axios errors and provide user-friendly messages.
