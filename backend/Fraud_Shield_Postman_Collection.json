@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "Fraud Shield API",
+    "description": "Postman Collection for Fraud Shield Backend and AI Microservice",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login/Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"name\": \"John Doe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scan QR",
+      "item": [
+        {
+          "name": "1. Safe Scan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"upiId\": \"payment@amazon\",\n  \"merchantName\": \"Amazon Retail\",\n  \"amount\": 500,\n  \"userId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/scan",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "scan"]
+            }
+          }
+        },
+        {
+          "name": "2. Suspicious Scan (High Amount)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"upiId\": \"unknown99@ybl\",\n  \"merchantName\": \"Unknown Shop\",\n  \"amount\": 8500,\n  \"userId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/scan",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "scan"]
+            }
+          }
+        },
+        {
+          "name": "3. Dangerous Scan (Fake Name)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"upiId\": \"customercare-refund@icici\",\n  \"merchantName\": \"Support\",\n  \"amount\": 10,\n  \"userId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/scan",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "scan"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports & History",
+      "item": [
+        {
+          "name": "Report Suspicious QR",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"upiId\": \"scammer@ybl\",\n  \"reason\": \"Asked for OTP on call\",\n  \"reportedBy\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/report",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "report"]
+            }
+          }
+        },
+        {
+          "name": "View Scan History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/history/{{user_id}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "history", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "user_id",
+      "value": "REPLACE_WITH_USER_ID_FROM_LOGIN"
+    }
+  ]
+}

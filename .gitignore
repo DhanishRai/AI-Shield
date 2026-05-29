@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.expo/
+
+# AI/ML - Large files
+ai-flask/model.pkl
+ai-flask/scaler.pkl
+ai-flask/data/creditcard.csv
+ai-flask/__pycache__/
+ai-flask/*.pyc
+ai-flask/Fraud-shield/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+*.apk
+*.aab
+build/
+dist/

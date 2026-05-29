@@ -1,0 +1,15 @@
+# Large files - don't push these
+model.pkl
+scaler.pkl
+data/creditcard.csv
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+
+# Notebooks
+notebooks/.ipynb_checkpoints/
