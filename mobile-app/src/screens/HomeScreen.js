@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Image, Platform, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Image, Platform, TextInput, Alert, Modal } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import * as Contacts from 'expo-contacts';
 import FraudMessageChecker from '../components/FraudMessageChecker';
@@ -18,6 +18,7 @@ const HomeScreen = ({ navigation }) => {
   const t = translations[language] || translations['English'];
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const [showPrivacy, setShowPrivacy] = useState(false);
   
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -256,7 +257,10 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <ArrowRight color="#CCC" size={18} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.optionItem}>
+          <TouchableOpacity 
+            style={styles.optionItem}
+            onPress={() => setShowPrivacy(true)}
+          >
             <View style={styles.optionContent}>
               <ShieldCheck color="#666" size={20} />
               <Text style={styles.optionText}>{t.home_privacyPolicy}</Text>
@@ -288,6 +292,33 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.fabText}>{t.home_scanAndPay}</Text>
         </LinearGradient>
       </TouchableOpacity>
+      <Modal visible={showPrivacy} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowPrivacy(false)}>
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 20, paddingTop: Platform.OS === 'ios' ? 60 : 40, borderBottomWidth: 1, borderBottomColor: '#F0F0F0' }}>
+            <TouchableOpacity onPress={() => setShowPrivacy(false)} style={{ padding: 5 }}>
+              <ArrowRight color="#1A1A1A" size={24} style={{ transform: [{ rotate: '180deg' }] }} />
+            </TouchableOpacity>
+            <Text style={{ fontSize: 20, fontWeight: '700', marginLeft: 15, color: '#1A1A1A' }}>Privacy Policies</Text>
+          </View>
+          <ScrollView contentContainerStyle={{ padding: 20 }}>
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, color: '#1E293B' }}>1. Data Collection</Text>
+            <Text style={{ fontSize: 15, color: '#475569', lineHeight: 22, marginBottom: 20 }}>We only collect the necessary information required to process your payments securely. We do not store your UPI PIN or banking passwords.</Text>
+            
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, color: '#1E293B' }}>2. Fraud Detection Scanning</Text>
+            <Text style={{ fontSize: 15, color: '#475569', lineHeight: 22, marginBottom: 20 }}>When you scan a QR code or enter a UPI ID, we send the merchant details to our secure AI backend to verify its safety. This data is strictly used for risk analysis and is not sold to third parties.</Text>
+            
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, color: '#1E293B' }}>3. Contact Information</Text>
+            <Text style={{ fontSize: 15, color: '#475569', lineHeight: 22, marginBottom: 20 }}>We may request access to your device contacts to help you easily find people to pay. We do not upload your entire address book to our servers.</Text>
+            
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, color: '#1E293B' }}>4. Community Reporting</Text>
+            <Text style={{ fontSize: 15, color: '#475569', lineHeight: 22, marginBottom: 20 }}>Reports of fraudulent contacts or UPI IDs are reviewed by our security team and may be shared with the National Payments Corporation of India (NPCI) for further action.</Text>
+            
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, color: '#1E293B' }}>5. Updates to Policy</Text>
+            <Text style={{ fontSize: 15, color: '#475569', lineHeight: 22, marginBottom: 40 }}>We may update these policies from time to time. Your continued use of the app constitutes acceptance of any changes.</Text>
+          </ScrollView>
+        </View>
+      </Modal>
+
     </ScreenContainer>
   );
 };
